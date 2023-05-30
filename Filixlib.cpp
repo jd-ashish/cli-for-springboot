@@ -1,9 +1,11 @@
 #include <iostream>
 #include <string>
 #include <cstring>
-#include "lib/utils/util.c"
+#include "lib/init/init.c"
+// #include "lib/utils/util.c"
 #include "lib/help/help.c"
 #include "lib/check/check.c"
+
 
 using namespace std;
 
@@ -23,22 +25,14 @@ std::string exec(const char *cmd)
     return result;
 }
 
+void createDataFile(){
+
+}
 void installApp()
 {
 
-    const char *newDir = "/.filixlib";
-    string c = Util::get_current_dir() + newDir;
-    const char *newDirPath = c.c_str();
-    if (std::filesystem::is_directory(newDirPath) == false)
-    {
-        std::filesystem::create_directory(newDirPath);
-        cout << "projectd started" << endl;
-    }else{
-        cout << "projectd already started" << endl;
-    }
-    //
+    Init::start();
     
-    // std::cout << exec("hhfhdhf -version");
 }
 
 void pwd()

@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1683717476 source:c:\cpp\filixlib\main.cpp
+	<iostream>
+	<string>
+	<iostream>
+

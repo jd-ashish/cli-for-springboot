@@ -6,10 +6,12 @@
 #include <filesystem>
 #include <fstream>
 #include <map>
+#include "../json.hpp"
+#include "../cppcodec/base64_default_rfc4648.hpp"
 
 void CreateDataInitFile()
 {
-    const char *newDir = "/.filixlib/data.json";
+    const char *newDir = "/.filixlib/InitData.dat";
 
     std::string c = Util::get_current_dir() + newDir;
     const char *newDirPath = c.c_str();
@@ -52,7 +54,6 @@ void Init::start()
     }
     else
     {
-        CreateDataInitFile();
         std::cout << "projectd already started" << std::endl;
     }
 }

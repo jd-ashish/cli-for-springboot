@@ -6,6 +6,8 @@
 #include "lib/help/help.c"
 #include "lib/check/check.c"
 
+#include "db/filixlib/table/initdata.c"
+
 
 using namespace std;
 
@@ -25,25 +27,6 @@ std::string exec(const char *cmd)
     return result;
 }
 
-void createDataFile(){
-
-}
-void installApp()
-{
-
-    Init::start();
-    
-}
-
-void pwd()
-{
-
-    cout << Util::get_current_dir();
-}
-void makecontroller()
-{
-}
-
 std::string get(const char *get_type_list)
 {
     std::string get_type = get_type_list;
@@ -61,6 +44,33 @@ std::string get(const char *get_type_list)
         return pkgData;
     }
     return "";
+}
+
+void createDataFile()
+{
+}
+void installApp()
+{
+
+    std::map<std::string, std::string> map;
+
+    map["token"] = "token";
+    map["pkg"] = get("pkg");
+    map["java_version"] = get("java_version");
+    map["pwd"] = Util::get_current_dir();
+    Init::start();
+
+    cout << get("java_version");
+    InitData::Insert(map);
+}
+
+void pwd()
+{
+
+    cout << Util::get_current_dir();
+}
+void makecontroller()
+{
 }
 
 int main(int argc, char *argv[])

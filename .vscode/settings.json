@@ -57,7 +57,18 @@
         "filesystem": "c",
         "iomanip": "c",
         "ratio": "c",
-        "string_view": "c"
+        "string_view": "c",
+        "init.c": "cpp",
+        "fstream": "c",
+        "initdata.h": "c",
+        "map": "cpp",
+        "xtree": "cpp",
+        "any": "cpp",
+        "array": "cpp",
+        "clocale": "cpp",
+        "forward_list": "cpp",
+        "numeric": "cpp",
+        "valarray": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

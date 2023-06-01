@@ -61,6 +61,12 @@ std::string Help::readXMLfile(const char *xmlFile, std::string type_info)
 
                     groupIdCount++;
                 }
+            }else if(type_info == "java_version"){
+                char *java_version = strstr(s, "<java.version>");
+                if (java_version != NULL)
+                {
+                   pkg.append(java_version);
+                }
             }
         };
 

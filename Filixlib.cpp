@@ -7,7 +7,7 @@
 #include "lib/check/check.c"
 
 #include "db/filixlib/table/initdata.c"
-
+#include "lib/controller/controller.c"
 
 using namespace std;
 
@@ -30,6 +30,12 @@ std::string exec(const char *cmd)
 std::string get(const char *get_type_list)
 {
     std::string get_type = get_type_list;
+    if (get_type == "data")
+    {
+
+        InitData::MyData();
+        return "";
+    }
     const char *pomfile = "is-pom";
     if (Check::args(pomfile, Util::get_current_dir()) == true)
     {
@@ -45,7 +51,15 @@ std::string get(const char *get_type_list)
     }
     return "";
 }
-
+void getPhraseInput(const char *get_type_list)
+{
+    std::string get_type = get_type_list;
+    if(get_type=="pkg"){
+        printf("\033[1;34mPackage for you projects is\033[0m \033[1;32m\t%s\n\033[0m", get("pkg").c_str());
+    }else{
+        get(get_type_list);
+    }
+}
 void createDataFile()
 {
 }
@@ -56,12 +70,13 @@ void installApp()
 
     map["token"] = "token";
     map["pkg"] = get("pkg");
-    map["java_version"] = get("java_version");
+    map["version"] = get("java_version");
+    map["type"] = "java";
     map["pwd"] = Util::get_current_dir();
-    Init::start();
-
-    cout << get("java_version");
-    InitData::Insert(map);
+    if (Init::start() == true)
+    {
+        InitData::Insert(map);
+    }
 }
 
 void pwd()
@@ -104,12 +119,13 @@ int main(int argc, char *argv[])
         }
         if (argc > 1 && (strcmp(argv[i], "get") == 0))
         {
-            get(argv[i + 1]);
+            getPhraseInput(argv[i + 1]);
         }
         if (argc > 1 && (strcmp(argv[i], "makecontroller") == 0))
         {
-            cout << argv[i];
-            cout << argv[i + 1];
+            // cout << argv[i];
+            Controller::create(argv[i + 1],argv[i + 2]);
+            // cout << argv[i + 1];
         }
     }
     return 0;

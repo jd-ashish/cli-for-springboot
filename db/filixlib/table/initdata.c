@@ -8,15 +8,23 @@
 #include <map>
 #include <stdio.h>
 #include <cstring>
+#include <windows.h>
 using json = nlohmann::json;
 
-const char *getTable()
+std::string getTable()
 {
     const char *tableName = "/.filixlib/InitData.dat";
 
     std::string c = Util::get_current_dir() + tableName;
-    const char *tableNameStoreLocation = c.c_str();
-    return tableNameStoreLocation;
+    return c;
+}
+void trunc()
+{
+    std::ofstream fileRemove(getTable(), std::ofstream::out | std::ofstream::trunc);
+    if (fileRemove.is_open())
+    {
+        fileRemove.close();
+    }
 }
 class InitDataTbl
 {
@@ -57,33 +65,32 @@ public:
     {
         std::fstream fin;
 
-        const char *tableName = "/.filixlib/InitData.dat";
-
-        std::string c = Util::get_current_dir() + tableName;
-        const char *tableNameStoreLocation = c.c_str();
-
         json jsonData; // Create an empty JSON object
 
         Map mapObj(data);
-        std::cout << "Mapping initilization data...";
+        std::cout << "Mapping initilization data...\n";
 
         // Add jsonData to the JSON object
         jsonData["pkg"] = mapObj.get("pkg");
         jsonData["token"] = mapObj.get("token");
-        jsonData["java_version"] = mapObj.get("java_version");
+        jsonData["version"] = mapObj.get("version");
+        jsonData["type"] = mapObj.get("type");
         jsonData["pwd"] = mapObj.get("pwd");
 
         // Convert JSON object to string and print
-        std::cout << jsonData.dump(4) << std::endl;
+        // std::cout << jsonData.dump(4) << std::endl;
         std::string input = jsonData.dump(4);
         std::string base64 = cppcodec::base64_rfc4648::encode(input);
-
-        // testing end
-
+        trunc();
         // Save JSON object to a file
-        std::ofstream file(tableNameStoreLocation, std::ios::in | std::ios::binary | std::ios::app);
+        std::ofstream file(getTable(), std::ios::in | std::ios::binary | std::ios::app);
         file << base64;
         file.close();
+        printf("\033[1;32mProject start successfully...\n");
+        printf("\033[1;34mPackage for you projects is\033[0m \033[1;32m\t%s\n\033[0m", mapObj.get("pkg").c_str());
+        // printf("\033[1;31mThis is red text\033[0m\n");
+        // printf("\033[1;32mThis is green text\033[0m\n");
+        // printf("\033[1;34mThis is blue text\033[0m\n");
     }
 
     // void SEARCH(int id)
@@ -172,7 +179,9 @@ public:
 
 bool isDataExist(int isDataOrTable)
 {
+    std::cout << "\033[1;33mexamining organised data...\033[0m\n";
     bool status = false;
+
     std::ifstream file(getTable(), std::ios::in | std::ios::binary | std::ios::app);
     if (file.is_open())
     {
@@ -183,16 +192,13 @@ bool isDataExist(int isDataOrTable)
                 std::string base64;
                 file >> base64;
 
+                // std::cout << base64;
                 std::string decoded = cppcodec::base64_rfc4648::decode<std::string>(base64);
-
-                std::cout << "Decoded: " << decoded << std::endl;
                 json jsonData = nlohmann::json::parse(decoded);
                 std::string pkg = jsonData["pkg"];
-
-                // // Print the data
-                std::cout << "pkg: " << pkg << std::endl;
-
                 file.close();
+                std::cout << "examining organised data ALl good! \n";
+                printf("Package for you projects is \n", pkg.c_str());
                 status = true;
             }
             catch (...)
@@ -218,12 +224,7 @@ void ShowRecord()
     std::fstream fin;
     int ff = 0;
 
-    const char *tableName = "/.filixlib/InitData.dat";
-
-    std::string c = Util::get_current_dir() + tableName;
-    const char *tableNameStoreLocation = c.c_str();
-
-    std::ifstream file(tableNameStoreLocation, std::ios::in | std::ios::binary | std::ios::app);
+    std::ifstream file(getTable(), std::ios::in | std::ios::binary | std::ios::app);
     if (file.is_open())
     {
         // json data;
@@ -232,12 +233,17 @@ void ShowRecord()
 
         std::string decoded = cppcodec::base64_rfc4648::decode<std::string>(base64);
 
-        std::cout << "Decoded: " << decoded << std::endl;
+        // Get the handle to the console
+        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+        // Set the text color to red
+        SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN);
+        std::cout << decoded << std::endl;
+        // Reset the text color to the default
+        SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+
         json jsonData = nlohmann::json::parse(decoded);
         std::string pkg = jsonData["pkg"];
-
-        // // Print the data
-        std::cout << "pkg: " << pkg << std::endl;
 
         file.close();
     }
@@ -249,17 +255,38 @@ void ShowRecord()
 
 void InitData::Insert(std::map<std::string, std::string> data)
 {
-    // std::cout << "\t\t***InitData RECORD***\n";
-    // std::cout << Util::get_current_dir();
 
     InitDataTbl myObj; // Create an object of MyClass
-    if (isDataExist(2) == false)
+
+    if (isDataExist(2) == true)
     {
         myObj.ADDRECORD(data); // Call the method
     }
-    // std::cout << "testing....";
-    ShowRecord();
-    // InitDataTbl S = new InitDataTbl();
+    // ShowRecord();
+}
+nlohmann::json InitData::GetData()
+{
+    json jsonData = NULL;
+    std::fstream fin;
+    std::ifstream file(getTable(), std::ios::in | std::ios::binary | std::ios::app);
+    if (file.is_open())
+    {
+        // json data;
+        std::string base64;
+        file >> base64;
 
-    // S::ADDRECORD();
+        std::string decoded = cppcodec::base64_rfc4648::decode<std::string>(base64);
+        jsonData = nlohmann::json::parse(decoded);
+        file.close();
+        
+    }
+    else
+    {
+        std::cerr << "Failed to open the file." << std::endl;
+    }
+    return jsonData;
+}
+void InitData::MyData()
+{
+    return ShowRecord();
 }

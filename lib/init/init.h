@@ -4,5 +4,5 @@
 class Init
 {
 public:
-    static void start();
+    static bool start();
 };

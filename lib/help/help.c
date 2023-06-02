@@ -7,11 +7,12 @@ void Help::helpList()
 {
     // std::cout << "Welcome to Flixlib" << std::endl
     std::list<std::string> list = {
-        "check",
-        "check is-pom             check pom.xml file exist not not",
-        "get",
-        "get pkg             get project pkg name"
-        };
+        "\033[1;33mcheck\033[0m",
+        "\033[1;32mcheck is-pom\033[0m             \033[1;32mcheck pom.xml file exist not not\033[0m",
+        "\033[1;33mget\033[0m",
+        "\033[1;32mget pkg             get project pkg name\033[0m",
+        "\033[1;32mget data             get your projects informations\033[0m",
+    };
 
     for (auto const &i : list)
     {
@@ -33,7 +34,7 @@ std::string Help::readXMLfile(const char *xmlFile, std::string type_info)
     {
         // read each lines of XML file
         int groupIdCount = 0, artifactIdCount = 0;
-        
+
         while (!feof(fp))
         {
 
@@ -61,11 +62,13 @@ std::string Help::readXMLfile(const char *xmlFile, std::string type_info)
 
                     groupIdCount++;
                 }
-            }else if(type_info == "java_version"){
+            }
+            else if (type_info == "java_version")
+            {
                 char *java_version = strstr(s, "<java.version>");
                 if (java_version != NULL)
                 {
-                   pkg.append(java_version);
+                    pkg.append(java_version);
                 }
             }
         };
@@ -79,4 +82,21 @@ std::string Help::readXMLfile(const char *xmlFile, std::string type_info)
         fclose(fp);
     }
     return pkg;
+}
+
+bool Help::CheckDir(std::string dir)
+{
+
+    // if (!dir.empty())
+    // {
+    //     dir.erase(dir.size() - 1);
+    // }
+    if (std::filesystem::is_directory(dir.c_str()))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }

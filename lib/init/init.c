@@ -9,40 +9,9 @@
 #include "../json.hpp"
 #include "../cppcodec/base64_default_rfc4648.hpp"
 
-void CreateDataInitFile()
+bool Init::start()
 {
-    const char *newDir = "/.filixlib/InitData.dat";
-
-    std::string c = Util::get_current_dir() + newDir;
-    const char *newDirPath = c.c_str();
-
-    if (std::filesystem::exists(newDirPath) == false)
-    {
-        std::ofstream outfile(newDirPath);
-
-        outfile << "my text here!" << std::endl;
-
-        outfile.close();
-
-        std::cout << "projectd started" << std::endl;
-    }
-    else
-    {
-        std::map<std::string, std::string> map;
-
-        // Insert some values into the map
-        map["pkg"] = "com.flixlib.app";
-        map["root"] = "root/directry";
-
-        // https://github.com/dropbox/json11/blob/master/json11.cpp
-        // json11::Json Json_mp = json11::Json(map);
-
-        std::cout << "projectd already started" << std::endl;
-    }
-}
-
-void Init::start()
-{
+    bool projectStatus = false;   
     const char *newDir = "/.filixlib";
 
     std::string c = Util::get_current_dir() + newDir;
@@ -51,9 +20,12 @@ void Init::start()
     {
         std::filesystem::create_directory(newDirPath);
         std::cout << "projectd started" << std::endl;
+        projectStatus = true;
     }
     else
     {
         std::cout << "projectd already started" << std::endl;
+        projectStatus = false;
     }
+    return projectStatus;
 }

@@ -7,14 +7,22 @@
 #include "JavaSampleController.c"
 using json = nlohmann::json;
 
-void Controller::create(const char *controllerName , const char *codeType)
+
+void Controller::create(const char *controllerName, const char *codeType)
 {
 
     std::string name = controllerName;
     std::string apiOrView = codeType;
     std::string apiOrViewType = "api";
-    if(apiOrView=="view"){
-        
+    std::cout << apiOrView;
+    
+    if (apiOrView == "view")
+    {
+        apiOrViewType = "view";
+    }
+    else
+    {
+        apiOrViewType = "api";
     }
     std::string pwd = InitData::GetData()["pwd"];
     std::string pkg = InitData::GetData()["pkg"];
@@ -53,18 +61,17 @@ void Controller::create(const char *controllerName , const char *codeType)
     {
         pwd.append("Controller");
         std::string controllerFolder = pwd;
-        std::cout << controllerFolder << "\n";
-        std::cout << Help::CheckDir(controllerFolder) << "\n";
         std::string location = controllerFolder;
         location.append("\\").append(fileName);
 
         json jsonData; // Create an empty JSON object
 
         // Add jsonData to the JSON object
-        jsonData["root_pkg"] = pkg+".Controller;";
+        jsonData["root_pkg"] = pkg + ".Controller;";
         jsonData["fileName"] = name;
         std::map<std::string, std::string> resource;
         resource["pkg"] = "import org.springframework.web.bind.annotation.*;";
+        resource["pkg1"] = "import org.springframework.stereotype.*;";
 
         if (Help::CheckDir(controllerFolder))
         {
@@ -76,11 +83,17 @@ void Controller::create(const char *controllerName , const char *codeType)
             if (outputFile.is_open())
             {
                 // Write the content to the file
-                outputFile << getSample(jsonData,resource);
+                if (apiOrViewType == "api")
+                {
+                    outputFile << getSampleAPI(jsonData, resource);
+                }
+                else
+                {
+                    outputFile << getSampleView(jsonData, resource);
+                }
 
                 // Close the file
                 outputFile.close();
-                std::cerr << "writtened file" << std::endl;
             }
             else
             {
@@ -89,7 +102,6 @@ void Controller::create(const char *controllerName , const char *codeType)
         }
         else
         {
-            std::cerr << "another created " << std::endl;
             std::filesystem::create_directory(controllerFolder);
         }
     }

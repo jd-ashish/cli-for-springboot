@@ -8,6 +8,7 @@
 
 #include "db/filixlib/table/initdata.c"
 #include "lib/controller/controller.c"
+#include <conio.h> // For _getch() function (Windows-specific)
 
 using namespace std;
 
@@ -54,9 +55,12 @@ std::string get(const char *get_type_list)
 void getPhraseInput(const char *get_type_list)
 {
     std::string get_type = get_type_list;
-    if(get_type=="pkg"){
+    if (get_type == "pkg")
+    {
         printf("\033[1;34mPackage for you projects is\033[0m \033[1;32m\t%s\n\033[0m", get("pkg").c_str());
-    }else{
+    }
+    else
+    {
         get(get_type_list);
     }
 }
@@ -123,8 +127,51 @@ int main(int argc, char *argv[])
         }
         if (argc > 1 && (strcmp(argv[i], "makecontroller") == 0))
         {
+
+            int selectedOption = 0;
+            const int totalOptions = 3;
+
+            while (true)
+            {
+                // system("cls"); // Clear the console screen (Windows-specific)
+
+                // Display the menu options
+                std::cout << "Menu Options:\n";
+                for (int i = 0; i < totalOptions; ++i)
+                {
+                    if (selectedOption == i)
+                    {
+                        std::cout << "> ";
+                    }
+                    else
+                    {
+                        std::cout << "  ";
+                    }
+                    std::cout << "Option " << (i + 1) << "\n";
+                }
+
+                // Wait for user input
+                char key = _getch(); // Get a key press (Windows-specific)
+
+                // Process the user's input
+                switch (key)
+                {
+                case 72: // Up arrow key
+                    selectedOption = (selectedOption - 1 + totalOptions) % totalOptions;
+                    break;
+                case 80: // Down arrow key
+                    selectedOption = (selectedOption + 1) % totalOptions;
+                    break;
+                case 13: // Enter key
+                    // Perform the action corresponding to the selected option
+                    std::cout << "You selected Option " << (selectedOption + 1) << ".\n";
+                    // Add any additional code here for the selected option
+                    break;
+                }
+            }
+
             // cout << argv[i];
-            Controller::create(argv[i + 1],argv[i + 2]);
+            // Controller::create(argv[i + 1],argv[i + 2]);
             // cout << argv[i + 1];
         }
     }
